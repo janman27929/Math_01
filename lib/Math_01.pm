@@ -4,36 +4,35 @@ use Modern::Perl;
 package Math_01 {
 use base qw(RDD);
 
-sub new {
-  my %defaults = ();
-  my $self=shift;$self=$self->NEXT::new(%defaults, @_)
-}
-
-sub setup     {my $self=shift;$self->NEXT::setup(@_)         }
-sub teardown  {my $self=shift;$self->NEXT::teardown(@_)      }
-
-
-
-sub main     { 
-  my $self = shift;  
+sub new       {
+  my ($class, %parms) = @_;
+  my %defaults = (
+  );
+  my $self = $class->NEXT::new(%defaults, %parms);
   $self;
 }
+
+sub add_em {
+  my ($self, @parms) = @_;
+  return 0 unless @parms;
+  my $total = 0;
+  for (@parms) {
+    $self->prn_tracer('add_01',$total,$_);
+    next unless defined;
+    $self->verify($_);
+    $total += $_;
+    $self->prn_tracer('add_21',$total,$_);
+  }
+  return $total;
+}
+
+sub verify {
+  my ($self,$num) = @_;
+  die ("FAIL: no refs:\n") if  (ref $num);
+  die ("FAIL: bad num:$_:\n") unless ($num =~ /^[-+]*\d*\.*\d+$/);
+}
+
 
 1;
 }#----- Math_01 -----
 
-=head1 NAME
-
-Math_01
-
-< description_here NOTE: use "ca<" to change text within > 
-
-=head1 DESCRIPTION
-
-< description_here NOTE: use "ca<" to change text within > 
-
-=head1 SYNOPSIS
-
-< example usage > 
-
-=cut

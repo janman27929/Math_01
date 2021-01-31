@@ -46,16 +46,22 @@ sub shutdown  : Test(shutdown) {
 
 #-------------------------------[ UNIT TESTS HERE ]-----------------------------
 
-sub test_base : Test(no_plan) {
-  #my @mocks = set_mocks [(qw(MODULE METHOD MOCK))];
-
+sub add_em : Test(no_plan) {
+  print '-'x30, '[ add_em ]', '-'x30 ,"\n";
   my $self  = shift->{base};  
-  #$self->setup;
-  is  ref $self, 'Math_01', 'is: ref $self';
-  print '-'x30, '[ test_Math_01 ]', '-'x30 ,"\n";
+  is  $self->add_em(1,2,3), 6, 'is: add_em: 6';
+  is  $self->add_em(1), 1, 'is: add_em: 1';
+  is  $self->add_em(), 0, 'is: add_em: 1';
+  like ( dies { $self->add_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->add_em(undef), 0, 'is: add_em: 1';
+  like ( dies { $self->add_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  #$self->set_tracer;
+  is  $self->add_em(1,'12', 1, -1), 13, 'is: add_em: 1';
+  is  $self->add_em(1, 10.5, -1.5, 1, -1), 10, 'is: add_em: 10';
   $DB::single = 1; 
   $DB::single = 1; 
 }
+
 
 #-------------------------------[ Infra commands ]-----------------------------
 if (! caller()) {Test::Class->runtests}
