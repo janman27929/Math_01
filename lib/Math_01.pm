@@ -1,82 +1,29 @@
 use lib qw(. .. t lib ../lib);
 use Modern::Perl;
 
-package Math_01 {
+package Common {
 use base qw(RDD);
 
-sub new       {
-  my ($class, %parms) = @_;
-  my %defaults = (
-  );
-  my $self = $class->NEXT::new(%defaults, %parms);
-  $self;
-}
-
-sub add_em {
-  my ($self, @parms) = @_;
-  $self->prn_tracer('add_00',$#parms);
+sub do_math {
+  my ($self,@parms) = @_;
   return 0 unless @parms;
-  my $total = 0;
+  $self->init_total;
   for (@parms) {
-    $self->prn_tracer('add_01',$total,$_);
+    $self->prn_tracer('div_11',$self->get_total,$_);
     next unless defined;
+    next if $self->seed($_);
     $self->verify($_);
-    $total += $_;
-    $self->prn_tracer('add_21',$total,$_);
+    $self->bump_total($_);
+    $self->prn_tracer('div_21',$self->get_total,$_);
   }
-  return $total;
+  return $self->get_total;
 }
 
-sub subtract_em {
-  my ($self, @parms) = @_;
-  return 0 unless @parms;
-  my $total = 0;
-  for (@parms) {
-    $self->prn_tracer('sbt_11',$total,$_);
-    next unless defined;
-    next if $self->seed(\$total, $_);
-    $self->verify($_);
-    $total -= $_;
-    $self->prn_tracer('sbt_21',$total,$_);
-  }
-  return $total;
-}
+sub init_total { $_[0]->set_total (undef) }
 
-sub multiply_em {
-  my ($self, @parms) = @_;
-  return 0 unless @parms;
-  my $total = 0;
-  for (@parms) {
-    $self->prn_tracer('mlt_11',$total,$_);
-    next unless defined;
-    next if $self->seed(\$total, $_);
-    $self->verify($_);
-    $total *= $_;
-    $self->prn_tracer('mlt_21',$total,$_);
-  }
-  return $total;
-}
-
-sub divide_em {
-  my ($self, @parms) = @_;
-  return 0 unless @parms;
-  my $total = 0;
-  for (@parms) {
-    $self->prn_tracer('div_11',$total,$_);
-    next unless defined;
-    next if $self->seed(\$total, $_);
-    $self->verify($_);
-    die ("FAIL: div by zero:\n") if ($_ == 0);
-    $total /= $_;
-    $self->prn_tracer('div_21',$total,$_);
-  }
-  return $total;
-}
-
-sub seed {
-  my ($self, $r_total, $num) = @_;
-  return 0 if $$r_total;
-  $$r_total = $num;
+sub seed { 
+  return 0 if defined $_[0]->get_total;
+  $_[0]->set_total($_[1]);
   return 1;
 }
 
@@ -85,6 +32,74 @@ sub verify {
   die ("FAIL: no refs:\n") if  (ref $num);
   die ("FAIL: bad num:$_:\n") unless ($num =~ /^[-+]*\d*\.*\d+$/);
 }
+
+}
+
+package Add {
+use base qw(Common);
+
+my $total;
+
+sub get_total  { $total}
+sub set_total  { $total = $_[1]}
+sub bump_total { $total += $_[1] }
+
+}
+
+package Subtract {
+use base qw(Common);
+
+my $total;
+
+sub get_total  { $total}
+sub set_total  { $total = $_[1]}
+sub bump_total { $total -= $_[1] }
+
+}
+
+package Multiply {
+use base qw(Common);
+
+my $total;
+
+sub get_total  { $total }
+sub set_total  { $total = $_[1]}
+sub bump_total { $total *= $_[1] }
+
+}
+
+
+package Divide {
+use base qw(Common);
+
+my $total;
+
+sub get_total  { $total}
+sub set_total  { $total = $_[1]}
+sub bump_total { $total /= $_[1] }
+
+sub verify {
+  my ($self,$num) = @_;
+  $self->NEXT::verify($num);
+  die ("FAIL: div by zero:\n") if ($num == 0);
+}
+
+}
+
+package Math_01 {
+use base qw(RDD);
+
+my %objs = (
+  add_em => Add->new(),
+  divide_em => Divide->new(),
+  subtract_em => Subtract->new(),
+  multiply_em => Multiply->new(),
+);
+
+sub add_em      {shift; $objs{add_em}->do_math(@_)}
+sub divide_em   {shift; $objs{divide_em}->do_math(@_)}
+sub multiply_em {shift; $objs{multiply_em}->do_math(@_)}
+sub subtract_em {shift; $objs{subtract_em}->do_math(@_)}
 
 
 1;
