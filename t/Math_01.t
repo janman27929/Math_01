@@ -45,6 +45,49 @@ sub shutdown  : Test(shutdown) {
 }
 
 #-------------------------------[ UNIT TESTS HERE ]-----------------------------
+sub divide_em : Test(no_plan) {
+  print '-'x30, '[ add_em ]', '-'x30 ,"\n";
+  my $self  = shift->{base};  
+  #$self->set_tracer;
+  is  $self->divide_em(44,2,11), 2, 'is: divide_em: 2';
+  is  $self->divide_em(1), 1, 'is: divide_em: 1';
+  like ( dies { $self->divide_em(1,0,12) }, qr/div by zero/,"div by zero"); 
+  is  $self->divide_em(), 0, 'is: divide_em: 0';
+  like ( dies { $self->divide_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->divide_em(undef), 0, 'is: divide_em: undef';
+  like ( dies { $self->divide_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  is  $self->divide_em(144,'12', 2, -1), -6, 'is: divide_em: -6';
+  is  $self->divide_em(10.5, -1.5, 1, -1), 7, 'is: divide_em: 7';
+}
+
+sub multipy_em : Test(no_plan) {
+  print '-'x30, '[ add_em ]', '-'x30 ,"\n";
+  my $self  = shift->{base};  
+  #$self->set_tracer;
+  is  $self->multiply_em(11,2,3), 66, 'is: multiply_em: 66';
+  is  $self->multiply_em(1), 1, 'is: multiply_em: 1';
+  is  $self->multiply_em(1,0), 0, 'is: multiply_em: 0';
+  is  $self->multiply_em(), 0, 'is: multiply_em: 0';
+  like ( dies { $self->multiply_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->multiply_em(undef), 0, 'is: multiply_em: undef';
+  like ( dies { $self->multiply_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  is  $self->multiply_em(1,'12', 2, -1), -24, 'is: multiply_em: -11';
+  is  $self->multiply_em(1, 10.5, -1.5, 1, -1), 15.75, 'is: multiply_em: 15.75';
+}
+
+sub subtract_em : Test(no_plan) {
+  print '-'x30, '[ add_em ]', '-'x30 ,"\n";
+  my $self  = shift->{base};  
+  #$self->set_tracer;
+  is  $self->subtract_em(11,2,3), 6, 'is: subtract_em: 6';
+  is  $self->subtract_em(1), 1, 'is: subtract_em: 1';
+  is  $self->subtract_em(), 0, 'is: subtract_em: 1';
+  like ( dies { $self->subtract_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->subtract_em(undef), 0, 'is: subtract_em: undef';
+  like ( dies { $self->subtract_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  is  $self->subtract_em(1,'12', 1, -1), -11, 'is: subtract_em: -11';
+  is  $self->subtract_em(1, 10.5, -1.5, 1, -1), -8, 'is: subtract_em: -8';
+}
 
 
 sub add_em : Test(no_plan) {
@@ -56,11 +99,8 @@ sub add_em : Test(no_plan) {
   like ( dies { $self->add_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
   is  $self->add_em(undef), 0, 'is: add_em: 1';
   like ( dies { $self->add_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
-  #$self->set_tracer;
   is  $self->add_em(1,'12', 1, -1), 13, 'is: add_em: 1';
   is  $self->add_em(1, 10.5, -1.5, 1, -1), 10, 'is: add_em: 10';
-  $DB::single = 1; 
-  $DB::single = 1; 
 }
 
 
