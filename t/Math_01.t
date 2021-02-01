@@ -60,6 +60,8 @@ sub divide_em : Test(no_plan) {
   is  $self->divide_em(10.5, -1.5, 1, -1), 7, 'is: divide_em: 7';
 }
 
+#TODO - create yaml which contains all test conditions
+
 sub multipy_em : Test(no_plan) {
   print '-'x30, '[ mutiply_em ]', '-'x30 ,"\n";
   my $self  = shift->{base};  
@@ -73,6 +75,53 @@ sub multipy_em : Test(no_plan) {
   like ( dies { $self->multiply_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
   is  $self->multiply_em(1,'12', 2, -1), -24, 'is: multiply_em: -11';
   is  $self->multiply_em(1, 10.5, -1.5, 1, -1), 15.75, 'is: multiply_em: 15.75';
+}
+
+sub median_em : Test(no_plan) {
+  print '-'x30, '[ median_em ]', '-'x30 ,"\n";
+  my $self  = shift->{base};  
+  #$self->set_tracer;
+  is  $self->median_em(11,2,3), 3, 'is: median_em: 66';
+  is  $self->median_em(1), 1, 'is: median_em: 1';
+  is  $self->median_em(1,0), 0.5, 'is: median_em: 0';
+  is  $self->median_em(), 0, 'is: median_em: 0';
+  like ( dies { $self->median_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->median_em(undef), undef, 'is: median_em: undef';
+  like ( dies { $self->median_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  is  $self->median_em(1,'12', 2, -1), 1.5, 'is: median_em: -11';
+  is  $self->median_em(11, 10.5, -1.5, 21, -1), 10.5, 'is: median_em: 10.5';
+}
+
+
+sub stddev_em : Test(no_plan) {
+  print '-'x30, '[ stddev_em ]', '-'x30 ,"\n";
+  my $self  = shift->{base};  
+  #$self->set_tracer;
+
+  is  $self->stddev_em(11,2,3), 4.03, 'is: stddev_em: 66';
+  is  $self->stddev_em(1), 0, 'is: stddev_em: 1';
+  is  $self->stddev_em(1,0), 0.5, 'is: stddev_em: 0';
+  is  $self->stddev_em(), 0, 'is: stddev_em: 0';
+  like ( dies { $self->stddev_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->stddev_em(undef), undef, 'is: stddev_em: undef';
+  like ( dies { $self->stddev_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  is  $self->stddev_em(1,'12', 2, -1), 5.02, 'is: stddev_em: -11';
+  is  $self->stddev_em(1, 10.5, -1.5, 1, -1), 4.37, 'is: stddev_em: 15.75';
+}
+
+sub average_em : Test(no_plan) {
+  print '-'x30, '[ average_em ]', '-'x30 ,"\n";
+  my $self  = shift->{base};  
+  #$self->set_tracer;
+  is  $self->average_em(10,20,30), 20, 'average_em: 20';
+  is  $self->average_em(1), 1, 'is: average_em: 1';
+  is  $self->average_em(1,0), 0.5, 'is: average_em: 0.5';
+  is  $self->average_em(), 0, 'is: average_em: 0';
+  like ( dies { $self->average_em(1,sub{9},2) }, qr/no refs:/,"no refs:"); 
+  is  $self->average_em(undef), undef, 'is: average_em: undef';
+  like ( dies { $self->average_em(12,'cat','two',1) }, qr/bad num/,"bad num:cat "); 
+  is  $self->average_em(1,'12', 2, -1), 3.5, 'is: average_em: 3.5';
+  is  $self->average_em(1, 10.5, -1.5, 1, -1), 2, 'is: average_em: 2';
 }
 
 sub subtract_em : Test(no_plan) {
